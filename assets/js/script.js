@@ -1,5 +1,6 @@
 
-
+// Declaring global variables, namely document selectors
+// Both standard JS and jquery is used
 var searchArea = document.querySelector(".search-area");
 var cityInput = document.querySelector("#inlineFormInputCityName");
 
@@ -7,10 +8,10 @@ var pastSearchArea = $("#past-search");
 var oneDayArea = $("#one-day");
 var fiveDayArea = $("#five-day");
 
+// Here is where local storage is grabbed
 let searchHistory = JSON.parse(localStorage.getItem("city-search")) || [];
 
-
-
+// This function is called when the user clicks either the submit button, or a past search button. It renders out the current forecast before passing on info to a second function to render the 5-day forecast, as well as tell the search history to update
 function citySearch(cityName){
   fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=65a04a7f24adaeb91e134ca4aa8960a0&units=imperial`)
   .then(function (response){
@@ -43,7 +44,7 @@ function citySearch(cityName){
   })
 }
 
-
+// This function renders out the 5-day forecast. The specified value for 'x' in the for loop corresponds to noon for each of the five days in the response from the API
 function fiveDayRender(cityLat, cityLon){
   fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${cityLat}&lon=${cityLon}&appid=65a04a7f24adaeb91e134ca4aa8960a0&units=imperial`)
   .then(function (response){
@@ -69,42 +70,48 @@ function fiveDayRender(cityLat, cityLon){
   })
 }
 
+// This is where the rendering out of the search history happens
 function displayHistory(){
 
   pastSearchArea.html("")
   
   for(x=0; x<searchHistory.length; x++){
     var searchRender = `
-    <button type="submit" value="${searchHistory[x]}" class="btn btn-primary history-button">${searchHistory[x]}</button>`
+    <div class="col-2">
+      <button type="submit" value="${searchHistory[x]}" class="btn btn-primary history-button">${searchHistory[x]}</button>
+    </div>`
 
     pastSearchArea.append(searchRender)
   }
 }
 
+// This event listener listens to the submit button and confirms the user put in something into the field
 searchArea.addEventListener("click", function(event){
   event.preventDefault();
   if(event.target.matches(".search-button")){
     var city = cityInput;
     var cityName = city.value;
     if(cityName === ""){
-      alert(`oi, you didn't put anything in`)
+      alert(`I'm not seeing a city name, please try again`)
     }else{
       citySearch(cityName)
     }
   }
 })
 
+// This jquery event listener listens for a search history button click and sends the value tag of the button off to the citySearch function to run the fetch
 pastSearchArea.on("click", function(event){
   event.preventDefault();
   if(event.target.matches(".history-button")){
     console.log(event.target.value)
     var cityName = event.target.value;
-    if(cityName === "" || cityName === null){
-      alert(`oi, you didn't put anything in`)
+    if(cityName === ""){
+      alert(`I can't read this input, try again`)
     }else{
       citySearch(cityName)
     }
   }
 })
 
+// This just displays the search history based off of the local storage upon loading the page
 displayHistory()
