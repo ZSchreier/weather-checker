@@ -8,7 +8,7 @@ For practical use, the current forecast for the chosen location is calculated of
 
 ## Preview
 
-The project can be found at [this address]()
+The project can be found at [this address](https://zschreier.github.io/weather-checker/)
 
 The following screenshot provides an example of how the page may look after some searches:
 ![An image displaying the website with some previous searches present](./assets/weather-example.png)
